@@ -1,0 +1,51 @@
+/* Hide the Swagger UI header */
+.swagger-ui .topbar {
+    display: none; /* Hides the header */
+  }
+  
+  /* Change background color */
+  .swagger-ui {
+    background-color: white; /* Light grey background */
+  }
+  
+  /* Change the font color */
+  .swagger-ui .opblock-summary {
+    color: #333; /* Dark text for operation summary */
+  }
+  
+  /* Customize button styles */
+  .swagger-ui .btn {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white; /* White text color */
+  }
+  
+  .swagger-ui .btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  .swagger-ui .info{
+    margin-top: 0px;
+    padding-top: 20px;
+  }
+
+  .swagger-ui .info .title {
+    color: #353535;
+    font-family: sans-serif;
+    font-size: 36px;
+    margin: 0;
+}
+
+.swagger-ui .info .title small.version-stamp {
+  background-color: #000000;
+}
+
+.title{
+  display: flex;
+  flex-direction: column;
+}
+
+.swagger-ui .scheme-container {
+  background: #fff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .15);
+  margin: 0 0 20px;
+  padding: 12px 0;
+}
