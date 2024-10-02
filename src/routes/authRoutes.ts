@@ -1,6 +1,8 @@
-const express = require('express');
-const { signup, login, requestPasswordReset, resetPassword } = require('../controllers/authController');
-const router = express.Router();
+import { Router } from 'express';
+import { signup, login, requestPasswordReset, resetPassword } from '../controllers/authController.ts'; // Updated path, removed ".ts" extension
+
+// Create a new Router instance
+const router = Router();
 
 /**
  * @swagger
@@ -142,4 +144,4 @@ router.post('/request-password-reset', requestPasswordReset);
 
 router.post('/reset-password', resetPassword);
 
-module.exports = router;
+export default router;
