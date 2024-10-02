@@ -2,9 +2,12 @@
   "name": "deepgram-streaming-voice-agent",
   "version": "0.0.1",
   "description": "Streaming Voice Agent Sample",
+  "type": "module",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon --watch src --ext ts --exec \"node --loader ts-node/esm\" src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "repository": {
     "type": "git",
@@ -32,5 +35,19 @@
     "swagger-ui-express": "^5.0.1",
     "twilio": "^5.3.2",
     "websocket": "^1.0.28"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.7.4",
+    "@types/nodemailer": "^6.4.16",
+    "@types/sequelize": "^4.28.20",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.2"
   }
 }

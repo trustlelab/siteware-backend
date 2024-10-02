@@ -1,10 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors'); // Import cors
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-const authRoutes = require('./routes/authRoutes'); // Ensure correct path
+import express, { Request, Response } from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors'; // Import cors
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import path, { dirname } from 'path';
+import authRoutes from './routes/authRoutes.ts'; // Explicitly add the .ts extension
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,10 +20,13 @@ const corsOptions = {
 // Enable CORS with the specified options
 app.use(cors(corsOptions));
 
+// Use import.meta.url to get the current directory path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'))); // Serve files from the public directory
 
-// Swagger configuration
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.1',
@@ -37,8 +41,9 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./routes/*.js'], // Path to the API docs
+  apis: ['./src/routes/*.ts'], // Path to the API docs
 };
+
 
 // Initialize swagger-jsdoc
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -52,12 +57,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
 app.use('/auth', authRoutes); // Make sure you're using the correct path for routes
 
 // Default route
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to the Siteware API!' });
 });
 
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port http://localhost:${PORT}`);
 });
