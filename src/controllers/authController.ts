@@ -3,9 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import User from '../models/User.ts'; // Adjust the import path according to your project structure
+import { PrismaClient } from '@prisma/client'; // Import Prisma Client
 
 dotenv.config(); // Load environment variables
+
+const prisma = new PrismaClient(); // Initialize Prisma Client
 
 const OTP_EXPIRATION = 10 * 60 * 1000; // OTP expires in 10 minutes
 
@@ -33,14 +35,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       res.status(400).json({ status: 0, message: 'Email already in use.' });
       return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword });
+    const newUser = await prisma.user.create({
+      data: { email, password: hashedPassword },
+    });
 
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email },
@@ -65,7 +69,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       res.status(400).json({ status: 0, message: 'Invalid email or password.' });
       return;
@@ -100,7 +104,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
   }
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       res.status(400).json({ status: 0, message: 'Email not found.' });
       return;
@@ -115,9 +119,13 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
     console.log('Hashed OTP:', hashedOTP); // Debugging purpose
 
     // Store the hashed OTP and expiration time in the user's database record
-    user.resetPasswordOTP = hashedOTP;
-    user.resetPasswordExpires = new Date(Date.now() + OTP_EXPIRATION); // 10 minutes expiration
-    await user.save();
+    await prisma.user.update({
+      where: { email },
+      data: {
+        resetPasswordOTP: hashedOTP,
+        resetPasswordExpires: new Date(Date.now() + OTP_EXPIRATION), // 10 minutes expiration
+      },
+    });
 
     // Send OTP via email
     await transporter.sendMail({
@@ -207,7 +215,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
   try {
     // Find user by email
-    const user = await User.findOne({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       res.status(400).json({ status: 0, message: 'User not found.' });
       return;
@@ -236,10 +244,14 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the user's password and clear the OTP fields
-    user.password = hashedPassword;
-    user.resetPasswordOTP = null; // Clear the OTP
-    user.resetPasswordExpires = null; // Clear the expiration time
-    await user.save();
+    await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+        resetPasswordOTP: null, // Clear the OTP
+        resetPasswordExpires: null, // Clear the expiration time
+      },
+    });
 
     // Generate a JWT token
     const token = jwt.sign(
@@ -250,9 +262,6 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
     res.status(200).json({ status: 1, message: 'Password reset successfully.', token, user: { email: user.email } });
   } catch (err) {
-    console.error(err);
-   
-
     console.error(err);
     res.status(500).json({ status: 0, message: 'Error resetting password.' });
   }
