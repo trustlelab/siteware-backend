@@ -14,6 +14,8 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Agent" (
     "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "uniqueId" VARCHAR(10) NOT NULL,
     "name" TEXT NOT NULL,
     "model" TEXT,
     "speechRecognition" BOOLEAN,
@@ -32,3 +34,9 @@ CREATE TABLE "Agent" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Agent_uniqueId_key" ON "Agent"("uniqueId");
+
+-- AddForeignKey
+ALTER TABLE "Agent" ADD CONSTRAINT "Agent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
