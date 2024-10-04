@@ -49,8 +49,9 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email },
       process.env.JWT_SECRET as string,
-      { expiresIn: '1h' }
+      { expiresIn: '180d' } // Set the token to expire in 180 days (approx. 6 months)
     );
+    
 
     res.status(201).json({ status: 1, message: 'User created successfully', token, user: { email: newUser.email } });
   } catch (err) {
@@ -84,7 +85,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET as string,
-      { expiresIn: '1h' }
+      { expiresIn: '180d' }
     );
 
     res.status(200).json({ status: 1, message: 'Login successful', token, user: { email: user.email } });
@@ -257,7 +258,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET as string,
-      { expiresIn: '1h' }
+      { expiresIn: '180d' }
     );
 
     res.status(200).json({ status: 1, message: 'Password reset successfully.', token, user: { email: user.email } });
