@@ -3,9 +3,10 @@ import bodyParser from 'body-parser';
 import cors from 'cors'; // Import cors
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import path, { dirname } from 'path';
-import authRoutes from './routes/authRoutes.ts'; // Explicitly add the .ts extension
-import { fileURLToPath } from 'url';
+import path from 'path';
+import authRoutes from './routes/authRoutes'; // Assuming your file is named authRoutes.ts
+import agentRoutes from './routes/AgentRoutes'; // Assuming your file is named AgentRoutes.ts
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,10 +20,6 @@ const corsOptions = {
 
 // Enable CORS with the specified options
 app.use(cors(corsOptions));
-
-// Use import.meta.url to get the current directory path
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'))); // Serve files from the public directory
@@ -41,20 +38,20 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/routes/*.ts'], // Path to the API docs
+  apis: ['./src/routes/*.ts'], // Path to the API docs (update as needed)
 };
-
 
 // Initialize swagger-jsdoc
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 // Serve Swagger documentation with custom CSS
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
-  customCssUrl: '/swagger-custom.css', // URL to your custom CSS
+  customCssUrl: '/swagger-custom.css', // URL to your custom CSS (if available)
 }));
 
 // Use auth routes
-app.use('/auth', authRoutes); // Make sure you're using the correct path for routes
+app.use('/auth', authRoutes); // Ensure this path is correct for your routes
+app.use('/agent', agentRoutes); // Ensure this path is correct for your agent routes
 
 // Default route
 app.get('/', (req: Request, res: Response) => {
@@ -64,5 +61,5 @@ app.get('/', (req: Request, res: Response) => {
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

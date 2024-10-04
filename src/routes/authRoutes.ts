@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signup, login, requestPasswordReset, resetPassword } from '../controllers/authController.ts'; // Updated path, removed ".ts" extension
+import { signup, login, requestPasswordReset, resetPassword } from '../controllers/authController'; // Updated path, removed ".ts" extension
 
 // Create a new Router instance
 const router = Router();
