@@ -3,7 +3,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import multer from 'multer'; // Import multer for file uploads
 import { PrismaClient } from '@prisma/client'; // Import Prisma Client
+import path from 'path';
+import fs from 'fs';
 
 dotenv.config(); // Load environment variables
 
@@ -21,6 +24,22 @@ const transporter = nodemailer.createTransport({
     pass: process.env.MAILPASS as string,
   },
 });
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.resolve('uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir);
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 // Generate random 6-digit OTP
 const generateOTP = (): string => Math.floor(100000 + Math.random() * 900000).toString();
@@ -261,9 +280,222 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
       { expiresIn: '180d' }
     );
 
-    res.status(200).json({ status: 1, message: 'Password reset successfully.', token, user: { email: user.email } });
+    res.status(200).json({ status: 1, message: 'Password reset successfully.', token, user: { email:user.email } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: 0, message: 'Error resetting password.' });
+  }
+};
+
+// Update profile avatar controller
+export const updateProfileAvatar = async (req: Request, res: Response): Promise<void> => {
+  upload.single('avatar')(req, res, async (err) => {
+    if (err) {
+      res.status(400).json({ status: 0, message: 'Error uploading avatar.' });
+      return;
+    }
+
+    if (!req.file) {
+      res.status(400).json({ status: 0, message: 'No file uploaded.' });
+      return;
+    }
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      res.status(401).json({ status: 0, message: 'Unauthorized.' });
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+      const userId = decoded.userId;
+
+      // Find user by userId
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        res.status(400).json({ status: 0, message: 'User not found.' });
+        return;
+      }
+
+      // Update the user's avatar URL
+      const avatarUrl = `/uploads/${req.file.filename}`;
+      await prisma.user.update({
+        where: { id: userId },
+        data: { avatarUrl },
+      });
+
+      res.status(200).json({ status: 1, message: 'Profile avatar updated successfully.', avatarUrl });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ status: 0, message: 'Error updating profile avatar.' });
+    }
+  });
+};
+
+// Remove profile avatar controller
+export const removeProfileAvatar = async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ status: 0, message: 'Unauthorized.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const userId = decoded.userId;
+
+    // Find user by userId
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      res.status(400).json({ status: 0, message: 'User not found.' });
+      return;
+    }
+
+    // Remove the avatar file if it exists
+    if (user.avatarUrl) {
+      const filePath = path.resolve(`.${user.avatarUrl}`);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    // Update the user's avatar URL to an empty string
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: '' },
+    });
+
+    res.status(200).json({ status: 1, message: 'Profile avatar removed successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 0, message: 'Error removing profile avatar.' });
+  }
+};
+
+// Get profile information controller
+export const getProfileInformation = async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ status: 0, message: 'Unauthorized.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const userId = decoded.userId;
+
+    // Find user by userId
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      res.status(400).json({ status: 0, message: 'User not found.' });
+      return;
+    }
+
+    // Send profile information
+    const { firstName, lastName, username, avatarUrl, email } = user;
+    res.status(200).json({
+      status: 1,
+      user: {
+        firstName,
+        lastName,
+        username,
+        avatarUrl,
+        email,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 0, message: 'Error retrieving profile information.' });
+  }
+};
+
+
+// Update profile information controller
+export const updateProfileInformation = async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ status: 0, message: 'Unauthorized.' });
+    return;
+  }
+
+  const { firstName, lastName, username, email } = req.body;
+
+  if (!firstName && !lastName && !username && !email) {
+    res.status(400).json({ status: 0, message: 'At least one field is required to update.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const userId = decoded.userId;
+
+    // Check if username already exists
+    if (username) {
+      const existingUser = await prisma.user.findUnique({ where: { username } });
+      if (existingUser && existingUser.id !== userId) {
+        res.status(400).json({ status: 0, message: 'Username already in use.' });
+        return;
+      }
+    }
+
+    // Check if email already exists
+    if (email) {
+      const existingUser = await prisma.user.findUnique({ where: { email } });
+      if (existingUser && existingUser.id !== userId) {
+        res.status(400).json({ status: 0, message: 'Email already in use.' });
+        return;
+      }
+    }
+
+    // Update user information
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        username,
+        email,
+      },
+    });
+
+    res.status(200).json({
+      status: 1,
+      message: 'Profile information updated successfully.',
+      user: {
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        username: updatedUser.username,
+        email: updatedUser.email,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 0, message: 'Error updating profile information.' });
+  }
+};
+
+// Remove account controller
+export const removeAccount = async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ status: 0, message: 'Unauthorized.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    const userId = decoded.userId;
+
+    // Delete related records before deleting the user account
+    await prisma.agent.deleteMany({ where: { userId } });
+    // Add more related records deletion if necessary here
+
+    // Delete user account
+    await prisma.user.delete({ where: { id: userId } });
+
+    res.status(200).json({ status: 1, message: 'Account removed successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 0, message: 'Error removing account.' });
   }
 };

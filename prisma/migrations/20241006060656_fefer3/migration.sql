@@ -3,6 +3,10 @@ CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "username" TEXT,
+    "firstName" TEXT,
+    "lastName" TEXT,
+    "avatarUrl" TEXT,
     "resetPasswordOTP" TEXT,
     "resetPasswordExpires" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -26,6 +30,28 @@ CREATE TABLE "Agent" (
     "realTimeSTT" BOOLEAN,
     "voiceCallSupported" BOOLEAN,
     "voiceCallProvider" TEXT,
+    "welcomeMessage" TEXT,
+    "agentPrompt" TEXT,
+    "llmModel" TEXT,
+    "llmVersion" TEXT,
+    "tokenLimit" INTEGER,
+    "temperature" DOUBLE PRECISION,
+    "transcriptionEngine" TEXT,
+    "transcriptionVersion" TEXT,
+    "keywords" TEXT,
+    "bufferSize" INTEGER,
+    "linearDelay" INTEGER,
+    "endpointing" INTEGER,
+    "ambientNoise" TEXT,
+    "onlineCheckMessage" TEXT,
+    "invokeAfterSeconds" INTEGER,
+    "callProvider" TEXT,
+    "callHangupLogic" TEXT,
+    "callTerminationTime" INTEGER,
+    "functionName" TEXT,
+    "taskSummarization" BOOLEAN,
+    "extractionEnabled" BOOLEAN,
+    "webhookURL" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -34,6 +60,9 @@ CREATE TABLE "Agent" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Agent_uniqueId_key" ON "Agent"("uniqueId");
