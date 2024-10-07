@@ -47,6 +47,16 @@ export const createAgent = async (req: Request, res: Response): Promise<void> =>
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
     const userId = decoded.userId; // Extract userId from the decoded token
 
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      res.status(404).json({ status: 0, message: 'User not found.' });
+      return;
+    }
+
     const uniqueId = generateUniqueId(); // Generate unique ID for the agent
 
     const newAgent = await prisma.agent.create({
@@ -72,6 +82,7 @@ export const createAgent = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ status: 0, message: 'Error creating agent' });
   }
 };
+
 
 // Get list of all agents
 export const getAllAgents = async (req: Request, res: Response): Promise<void> => {
@@ -101,7 +112,13 @@ export const getAllAgents = async (req: Request, res: Response): Promise<void> =
 
 // Get agent by ID
 export const getAgentById = async (req: Request, res: Response): Promise<void> => {
-  const agentId = parseInt(req.params.id); // Convert to integer
+  const id = parseInt(req.params.id, 10); // Convert id from params to a number
+
+  // Check if id is a valid number
+  if (isNaN(id)) {
+    res.status(400).json({ status: 0, message: 'Invalid agent ID.' });
+    return;
+  }
 
   // Get token from the Authorization header
   const token = req.headers['authorization']?.split(' ')[1];
@@ -115,14 +132,13 @@ export const getAgentById = async (req: Request, res: Response): Promise<void> =
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
     const userId = decoded.userId; // Extract userId from the decoded token
 
-    const agent = await prisma.agent.findUnique({
-      where: { id: agentId, userId }, // Ensure the agent belongs to the authenticated user
+    const agent = await prisma.agent.findFirst({
+      where: { id, userId }, // Ensure both id and userId match
     });
     if (!agent) {
-      res.status(404).json({ status: 0, message: 'Agent not found' });
+      res.status(404).json({ status: 0, message: 'Agent not found or unauthorized' });
       return;
     }
-
     res.status(200).json({ status: 1, message: 'Agent fetched successfully', agent });
   } catch (err) {
     console.error(err);
@@ -130,10 +146,10 @@ export const getAgentById = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Update an existing agent
+// Update an existing agent by id
 export const updateAgent = async (req: Request, res: Response): Promise<void> => {
-  const agentId = parseInt(req.params.id); // Convert to integer
-  const updates = req.body;
+  const id: number = parseInt(req.params.id, 10); // Extract id from params
+  const updates: Partial<Record<string, any>> = req.body;
 
   // Get token from the Authorization header
   const token = req.headers['authorization']?.split(' ')[1];
@@ -145,19 +161,23 @@ export const updateAgent = async (req: Request, res: Response): Promise<void> =>
   try {
     // Verify the token and extract userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
-    const userId = decoded.userId; // Extract userId from the decoded token
+    const userId: number = decoded.userId; // Extract userId from the decoded token
 
-    const agent = await prisma.agent.findUnique({
-      where: { id: agentId, userId }, // Ensure the agent belongs to the authenticated user
+    // Check if the agent exists and belongs to the user
+    const agent = await prisma.agent.findFirst({
+      where: { id, userId }, // Ensure both id and userId match
     });
     if (!agent) {
-      res.status(404).json({ status: 0, message: 'Agent not found' });
+      res.status(404).json({ status: 0, message: 'Agent not found or unauthorized' });
       return;
     }
 
+    // Update the agent with the provided data
     const updatedAgent = await prisma.agent.update({
-      where: { id: agentId },
-      data: updates,
+      where: { id: agent.id }, // Ensure the id is properly provided
+      data: {
+        ...updates, // Use spread operator to allow updating any provided property
+      },
     });
 
     res.status(200).json({ status: 1, message: 'Agent updated successfully', agent: updatedAgent });
@@ -166,7 +186,6 @@ export const updateAgent = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ status: 0, message: 'Failed to update agent' });
   }
 };
-
 // Remove an agent
 export const removeAgent = async (req: Request, res: Response): Promise<void> => {
   const agentId = parseInt(req.params.id); // Convert to integer

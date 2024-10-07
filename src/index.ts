@@ -7,7 +7,6 @@ import path from 'path';
 import authRoutes from './routes/authRoutes'; // Assuming your file is named authRoutes.ts
 import agentRoutes from './routes/AgentRoutes'; // Assuming your file is named AgentRoutes.ts
 
-
 const app = express();
 app.use(bodyParser.json());
 
@@ -21,8 +20,8 @@ const corsOptions = {
 // Enable CORS with the specified options
 app.use(cors(corsOptions));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public'))); // Serve files from the public directory
+console.log('Serving uploads directory from: ', path.join(__dirname, 'uploads'));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 const swaggerOptions = {
   swaggerDefinition: {
