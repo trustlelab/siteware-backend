@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node dist/index.js",
+    "build": "tsc",
     "dev": "ts-node-dev src/index.ts",
-    "build": "npx prisma generate && npx prisma migrate deploy && tsc",
     "generate": "npx prisma generate"
   },
   "dependencies": {
