@@ -6,7 +6,7 @@ APP_PATH="/home/ubuntu/app"
 cd $APP_PATH
 
 # Source the environment variables from the .env file
-source /home/ubuntu/env
+cp /home/ubuntu/env $APP_PATH/.env
 
 # Check if the app is already running with PM2
 if pm2 list | grep -q "$APP_NAME"; then
@@ -14,5 +14,5 @@ if pm2 list | grep -q "$APP_NAME"; then
     pm2 restart $APP_NAME
 else
     echo "Application $APP_NAME is not running. Starting it..."
-    pm2 start $APP_PATH/dist/index.js --name "$APP_NAME"
+    pm2 start npm -- start --name "$APP_NAME"
 fi

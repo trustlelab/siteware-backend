@@ -2,14 +2,14 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/application
+    destination: /home/ubuntu/app
     overwrite: true
     file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
     - location: scripts/before-install.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
   AfterInstall:
     - location: scripts/after-install.sh
       timeout: 1200
@@ -17,7 +17,7 @@ hooks:
   ApplicationStart:
     - location: scripts/application-start.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
   ApplicationStop:
     - location: scripts/application-stop.sh
       timeout: 300
