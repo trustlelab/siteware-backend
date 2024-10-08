@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ES2020",
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "strict": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,  // Add this to prevent emitting JS files
-    "forceConsistentCasingInFileNames": true
-  }
+     "typeRoots": ["./src/types", "./node_modules/@types"], // Include the custom types directory
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

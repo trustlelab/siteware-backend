@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    Int      @id @default(autoincrement())
+  email                 String   @unique
+  password              String
+  username              String?  @unique
+  firstName             String?
+  lastName              String?
+  avatarUrl             String?
+  resetPasswordOTP      String?  
+  resetPasswordExpires  DateTime? 
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  agents                Agent[]   
+}
+
+model Agent {
+  id                    Int      @id @default(autoincrement())
+  userId                Int      // Foreign key to User
+  uniqueId              String   @unique @db.VarChar(10) // Unique 10 random letters
+  name                  String
+  model                 String?  // optional
+  speechRecognition     Boolean? // optional
+  languageSupport       String?  // optional
+  ttsEngine             String?  // optional
+  ttsVoices             String?  // optional
+  sttEngine             String?  // optional
+  realTimeSTT           Boolean? // optional
+  voiceCallSupported    Boolean? // optional
+  voiceCallProvider     String?  // optional
+  welcomeMessage        String?  // Welcome message for the agent (optional)
+  agentPrompt           String?  // Prompt for the agent (optional)
+
+  // LLM Configuration
+  llmModel              String?  // LLM model used (optional)
+  llmVersion            String?  // LLM version used (optional)
+  tokenLimit            Int?     // Maximum tokens generated on each LLM output (optional)
+  temperature           Float?   // Temperature setting for LLM (optional)
+
+  // Transcriber Configuration
+  transcriptionEngine   String?  // Transcription engine used (optional)
+  transcriptionVersion  String?  // Version of transcription engine (optional)
+  keywords              String?  // Keywords to boost during speech recognition (optional)
+
+  // Voice Configuration
+  bufferSize            Int?     // Buffer size for audio responses (optional)
+  linearDelay           Int?     // Linear delay in ms (optional)
+  endpointing           Int?     // Endpointing in ms (optional)
+  ambientNoise          String?  // Ambient noise setting (optional)
+  onlineCheckMessage    String?  // Message when checking if the user is online (optional)
+  invokeAfterSeconds    Int?     // Time in seconds before invoking the online message (optional)
+
+  // Call Configuration
+  callProvider          String?  // Provider for voice calls (optional)
+  callHangupLogic       String?  // Call hangup logic (optional)
+  callTerminationTime   Int?     // Time in seconds for call termination (optional)
+
+  // Functions and Task Configurations
+  functionName          String?  // Function name for agent's action (optional)
+  taskSummarization     Boolean? // Enable summarization task (optional)
+  extractionEnabled     Boolean? // Enable extraction task (optional)
+  webhookURL            String?  // Webhook URL for posting extracted data (optional)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user                  User     @relation(fields: [userId], references: [id]) // Relation to User
+}
