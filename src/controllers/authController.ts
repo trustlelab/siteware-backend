@@ -499,3 +499,54 @@ export const removeAccount = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ status: 0, message: 'Error removing account.' });
   }
 };
+
+// Update password
+export const updatePassword = async (req: Request, res: Response): Promise<void> => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  // Get token from the Authorization header
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ status: 0, message: 'No token provided.' });
+    return;
+  }
+
+  try {
+    // Verify the token and extract userId
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
+    const userId = decoded.userId; // Extract userId from the decoded token
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      res.status(404).json({ status: 0, message: 'User not found' });
+      return;
+    }
+
+    // Check if old password matches
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      res.status(400).json({ status: 0, message: 'Old password is incorrect.' });
+      return;
+    }
+
+    // Check if new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      res.status(400).json({ status: 0, message: 'New password and confirm password do not match.' });
+      return;
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    res.status(200).json({ status: 1, message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: 0, message: 'Failed to update password' });
+  }
+};
