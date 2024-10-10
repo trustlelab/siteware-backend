@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signup, login, requestPasswordReset, resetPassword, updateProfileAvatar, removeProfileAvatar, getProfileInformation,updateProfileInformation ,removeAccount} from '../controllers/authController'; // Updated path, removed ".ts" extension
+import { signup, login, requestPasswordReset, resetPassword, updateProfileAvatar, removeProfileAvatar, getProfileInformation, updateProfileInformation, removeAccount, updatePassword } from '../controllers/authController'; // Updated path, removed ".ts" extension
 
 // Create a new Router instance
 const router = Router();
@@ -277,7 +277,6 @@ router.delete('/remove-profile-avatar', removeProfileAvatar);
  */
 router.get('/profile', getProfileInformation);
 
-
 /**
  * @swagger
  * /auth/profile:
@@ -347,6 +346,7 @@ router.get('/profile', getProfileInformation);
  *                   example: Failed to update profile information.
  */
 router.put('/profile', updateProfileInformation);
+
 /**
  * @swagger
  * /auth/remove-account:
@@ -383,5 +383,56 @@ router.put('/profile', updateProfileInformation);
  */
 router.delete('/remove-account', removeAccount);
 
+/**
+ * @swagger
+ * /auth/update-password:
+ *   post:
+ *     summary: Update user's password
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: oldpassword123
+ *               newPassword:
+ *                 type: string
+ *                 example: newpassword123
+ *               confirmPassword:
+ *                 type: string
+ *                 example: newpassword123
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 1
+ *                 message:
+ *                   type: string
+ *                   example: Password updated successfully.
+ *       400:
+ *         description: Failed to update password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 0
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update password.
+ */
+router.post('/update-password', updatePassword);
 
 export default router;
