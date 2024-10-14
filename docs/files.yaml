@@ -1,0 +1,58 @@
+openapi: 3.0.1
+info:
+  title: Files API Documentation
+  version: 1.0.0
+  description: API for managing file uploads, listing, and deletion.
+
+paths:
+  /file/upload:
+    post:
+      summary: Upload a new file
+      tags:
+        - File
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File uploaded successfully
+        '400':
+          description: Failed to upload file
+
+  /file/list:
+    get:
+      summary: List all files for a user
+      tags:
+        - File
+      responses:
+        '200':
+          description: List of files
+        '500':
+          description: Failed to fetch files
+
+  /file/delete/{id}:
+    delete:
+      summary: Delete a file by ID
+      tags:
+        - File
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the file to delete
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File deleted successfully
+        '404':
+          description: File not found
+        '500':
+          description: Failed to delete file

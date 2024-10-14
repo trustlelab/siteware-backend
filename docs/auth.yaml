@@ -1,0 +1,233 @@
+openapi: 3.0.1
+info:
+  title: Auth API Documentation
+  version: 1.0.0
+  description: API documentation for authentication and user account management.
+
+paths:
+  /auth/signup:
+    post:
+      summary: Create a new user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: testuser@example.com
+                password:
+                  type: string
+                  example: securepassword
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Email already in use
+
+  /auth/login:
+    post:
+      summary: Log in an existing user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: testuser@example.com
+                password:
+                  type: string
+                  example: securepassword
+      responses:
+        '200':
+          description: Login successful
+        '400':
+          description: Invalid email or password
+
+  /auth/request-password-reset:
+    post:
+      summary: Request a password reset OTP
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: testuser@example.com
+      responses:
+        '200':
+          description: OTP sent to email
+        '400':
+          description: Email not found
+
+  /auth/reset-password:
+    post:
+      summary: Reset password using OTP
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: testuser@example.com
+                otp:
+                  type: string
+                  example: 123456
+                newPassword:
+                  type: string
+                  example: newsecurepassword
+      responses:
+        '200':
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 1
+                  message:
+                    type: string
+                    example: Password reset successfully.
+                  token:
+                    type: string
+                    example: your_jwt_token_here
+                  user:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: testuser@example.com
+        '400':
+          description: Invalid OTP or user not found
+
+  /auth/update-profile-avatar:
+    put:
+      summary: Update user's profile avatar
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: The new profile avatar image file
+      responses:
+        '200':
+          description: Profile avatar updated successfully
+        '400':
+          description: Failed to update profile avatar
+
+  /auth/remove-profile-avatar:
+    delete:
+      summary: Remove user's profile avatar
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile avatar removed successfully
+        '400':
+          description: Failed to remove profile avatar
+
+  /auth/profile:
+    get:
+      summary: Get user's profile information
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information retrieved successfully
+        '400':
+          description: Failed to retrieve profile information
+
+    put:
+      summary: Update user's profile information
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                username:
+                  type: string
+                  example: johndoe
+                email:
+                  type: string
+                  example: testuser@example.com
+      responses:
+        '200':
+          description: Profile information updated successfully
+        '400':
+          description: Failed to update profile information
+
+  /auth/remove-account:
+    delete:
+      summary: Remove user's account
+      tags:
+        - User
+      responses:
+        '200':
+          description: Account removed successfully
+        '400':
+          description: Failed to remove account
+
+  /auth/update-password:
+    post:
+      summary: Update user's password
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: oldpassword123
+                newPassword:
+                  type: string
+                  example: newpassword123
+                confirmPassword:
+                  type: string
+                  example: newpassword123
+      responses:
+        '200':
+          description: Password updated successfully
+        '400':
+          description: Failed to update password
