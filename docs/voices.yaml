@@ -1,0 +1,69 @@
+openapi: 3.0.1
+info:
+  title: Voice Lab API Documentation
+  version: 1.0.0
+  description: API for managing and retrieving voice data from the Eleven Labs API.
+
+paths:
+  /voiceLab/getList:
+    get:
+      summary: Get a list of voices from Eleven Labs
+      tags:
+        - VoiceLab
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authorization (e.g., Bearer <token>)
+      responses:
+        '200':
+          description: Successfully fetched voices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 1
+                  voices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        voice_id:
+                          type: string
+                          description: Unique ID of the voice
+                          example: "voice_id_example"
+                        name:
+                          type: string
+                          description: Name of the voice
+                          example: "English US"
+        '401':
+          description: Unauthorized request (no token provided or invalid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "No token provided."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 0
+                  message:
+                    type: string
+                    example: "Internal server error."
