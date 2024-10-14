@@ -23,7 +23,8 @@ model User {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
-  agents                Agent[]   
+  agents                Agent[]  
+  twilioNumbers         TwilioNumber[]
 }
 
 model Agent {
@@ -77,4 +78,17 @@ model Agent {
   updatedAt             DateTime @updatedAt
 
   user                  User     @relation(fields: [userId], references: [id]) // Relation to User
+}
+
+model TwilioNumber {
+  id              Int      @id @default(autoincrement())
+  userId          Int      // Foreign key to User
+  phoneNumber     String   @unique
+  label           String   // Label for the phone number
+  accountSid      String
+  authToken       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id]) // Relation to User
 }
