@@ -25,6 +25,7 @@ model User {
 
   agents                Agent[]  
   twilioNumbers         TwilioNumber[]
+  files                 File[]    // Relation to File model
 }
 
 model Agent {
@@ -91,4 +92,18 @@ model TwilioNumber {
   updatedAt       DateTime @updatedAt
   
   user            User     @relation(fields: [userId], references: [id]) // Relation to User
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  fileName  String   // The name of the file
+  label     String?  // Optional label for the file
+  uuid      String   @unique // Unique identifier for the file
+  url       String   // The URL of the file
+  metadata  Json?    // Optional metadata for the file (can store various file properties)
+  createdAt DateTime @default(now()) // Creation date of the file
+  updatedAt DateTime @updatedAt // Auto-updates on every update
+  userId    Int      // Foreign key to User
+
+  user      User     @relation(fields: [userId], references: [id]) // Relation to User
 }
