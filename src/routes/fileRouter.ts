@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
 import {
   uploadFile,
   listUserFiles,
@@ -8,14 +10,19 @@ import {
 
 const router = Router();
 
-// Multer configuration for file upload
+const uploadDir = path.join(__dirname, '..','..', 'uploads', 'files');
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/files/'); // Directory to store uploaded files
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${file.fieldname}-${uniqueSuffix}.pdf`); // Save only PDF files
+    cb(null, `${file.fieldname}-${uniqueSuffix}.pdf`);
   }
 });
 
@@ -23,13 +30,12 @@ const upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
     if (file.mimetype !== 'application/pdf') {
-      return cb(null, false); // Reject the file
+      return cb(null, false);
     }
-    cb(null, true); // Accept the file
+    cb(null, true);
   }
 });
 
-// Routes
 router.post('/upload', upload.single('file'), uploadFile);
 router.get('/list', listUserFiles);
 router.delete('/delete/:id', deleteUserFile);
