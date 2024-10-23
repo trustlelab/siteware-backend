@@ -110,17 +110,16 @@ export const getAllAgents = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Get agent by ID
-export const getAgentById = async (req: Request, res: Response): Promise<void> => {
-  const id = parseInt(req.params.id, 10); // Convert id from params to a number
 
-  // Check if id is a valid number
+
+export const getAgentById = async (req: Request, res: Response): Promise<void> => {
+  const id = parseInt(req.params.id, 10); 
+
   if (isNaN(id)) {
     res.status(400).json({ status: 0, message: 'Invalid agent ID.' });
     return;
   }
 
-  // Get token from the Authorization header
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) {
     res.status(401).json({ status: 0, message: 'No token provided.' });
@@ -128,12 +127,11 @@ export const getAgentById = async (req: Request, res: Response): Promise<void> =
   }
 
   try {
-    // Verify the token and extract userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
-    const userId = decoded.userId; // Extract userId from the decoded token
+    const userId = decoded.userId; 
 
     const agent = await prisma.agent.findFirst({
-      where: { id, userId }, // Ensure both id and userId match
+      where: { id, userId }, 
     });
     if (!agent) {
       res.status(404).json({ status: 0, message: 'Agent not found or unauthorized' });
@@ -148,10 +146,9 @@ export const getAgentById = async (req: Request, res: Response): Promise<void> =
 
 // Update an existing agent by id
 export const updateAgent = async (req: Request, res: Response): Promise<void> => {
-  const id: number = parseInt(req.params.id, 10); // Extract id from params
+  const id: number = parseInt(req.params.id, 10); 
   const updates: Partial<Record<string, any>> = req.body;
 
-  // Get token from the Authorization header
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) {
     res.status(401).json({ status: 0, message: 'No token provided.' });
@@ -159,24 +156,21 @@ export const updateAgent = async (req: Request, res: Response): Promise<void> =>
   }
 
   try {
-    // Verify the token and extract userId
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key') as { userId: number };
-    const userId: number = decoded.userId; // Extract userId from the decoded token
+    const userId: number = decoded.userId; 
 
-    // Check if the agent exists and belongs to the user
     const agent = await prisma.agent.findFirst({
-      where: { id, userId }, // Ensure both id and userId match
+      where: { id, userId }, 
     });
     if (!agent) {
       res.status(404).json({ status: 0, message: 'Agent not found or unauthorized' });
       return;
     }
 
-    // Update the agent with the provided data
     const updatedAgent = await prisma.agent.update({
-      where: { id: agent.id }, // Ensure the id is properly provided
+      where: { id: agent.id }, 
       data: {
-        ...updates, // Use spread operator to allow updating any provided property
+        ...updates, 
       },
     });
 

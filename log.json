@@ -1,0 +1,86 @@
+[
+  {
+    "event": "connected",
+    "protocol": "Call",
+    "version": "1.0.0"
+  },
+  {
+    "event": "start",
+    "sequenceNumber": "1",
+    "start": {
+      "accountSid": "AC5543d0cf6dbf74446db55b6689562561",
+      "streamSid": "MZ3124858b58b468743ee0b374fe2b1cde",
+      "callSid": "CAc41906f3485536e8b9f281c62a69fc54",
+      "tracks": ["inbound"],
+      "mediaFormat": {
+        "encoding": "audio/x-mulaw",
+        "sampleRate": 8000,
+        "channels": 1
+      },
+      "customParameters": {
+        "aCustomParameter": "aCustomValue that was set in TwiML"
+      }
+    },
+    "streamSid": "MZ3124858b58b468743ee0b374fe2b1cde"
+  },
+  {
+    "event": "media",
+    "sequenceNumber": "4",
+    "media": {
+      "track": "inbound",
+      "chunk": "3",
+      "timestamp": "53",
+      "payload": "/v7+/3////9/fn19fn/+/n9+fv/+/n9///79/Pz9/v7+/n9+f3/+/v7+//7+/f7+//9///9/fn5+fn5/f35+//79/f3+///+/39+fn///v7/f3///v////9/f39/fn5+f/9/fn5/f35+fn5///7+/v7+//7+/v7+/v/+/v//////////f///fn19fX7//v7/f3////7/f39///9/fn/+/g=="
+    },
+    "streamSid": "MZe7ab7cf19ce0bd9cf0d709e531c57ccf"
+  },
+  {
+    "event": "stop",
+    "sequenceNumber": "432",
+    "streamSid": "MZe7ab7cf19ce0bd9cf0d709e531c57ccf",
+    "stop": {
+      "accountSid": "AC5543d0cf6dbf74446db55b6689562561",
+      "callSid": "CAd23b697e700b10efd710ee3323517fd9"
+    }
+  },
+  {
+    "id": 17,
+    "userId": 1,
+    "uniqueId": "clpl5kupqu",
+    "name": "Adam",
+    "model": null,
+    "speechRecognition": null,
+    "languageSupport": null,
+    "ttsEngine": null,
+    "ttsVoices": null,
+    "sttEngine": null,
+    "realTimeSTT": null,
+    "voiceCallSupported": null,
+    "voiceCallProvider": null,
+    "phoneNumber": "+12088048913",
+    "welcomeMessage": null,
+    "agentPrompt": null,
+    "llmModel": null,
+    "llmVersion": null,
+    "tokenLimit": null,
+    "temperature": null,
+    "transcriptionEngine": null,
+    "transcriptionVersion": null,
+    "keywords": null,
+    "bufferSize": null,
+    "linearDelay": null,
+    "endpointing": null,
+    "ambientNoise": null,
+    "onlineCheckMessage": null,
+    "invokeAfterSeconds": null,
+    "callProvider": "Twilio",
+    "callHangupLogic": "10",
+    "callTerminationTime": 180,
+    "functionName": null,
+    "taskSummarization": null,
+    "extractionEnabled": null,
+    "webhookURL": null,
+    "createdAt": "2024-10-21T00:01:28.605Z",
+    "updatedAt": "2024-10-21T00:54:00.075Z"
+  }
+]
