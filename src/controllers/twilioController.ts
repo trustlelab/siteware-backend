@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
 
+
 export const addTwilioNumber = async (req: Request, res: Response): Promise<void> => {
   try {
     const { phoneNumber, label, accountSid, authToken } = req.body;
@@ -63,12 +64,20 @@ export const addTwilioNumber = async (req: Request, res: Response): Promise<void
       },
     });
 
-    res.status(201).json({ message: 'Twilio number added successfully.', phoneNumber });
+    // Now set the webhook URL for the phone number using the provided SID and token
+    const webhookUrl = `${process.env.WEBHOOK_BASE_URL}/twiml`; // Make sure WEBHOOK_BASE_URL is set in the environment
+    await client.incomingPhoneNumbers(number.sid).update({
+      smsUrl: webhookUrl,
+      voiceUrl: webhookUrl,
+    });
+
+    res.status(201).json({ message: 'Twilio number added successfully and webhook updated.', phoneNumber });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    res.status(500).json({ message: 'Failed to add Twilio number.', error: errorMessage });
+    res.status(500).json({ message: 'Failed to add Twilio number and update webhook.', error: errorMessage });
   }
 };
+
 
 export const removeTwilioNumber = async (req: Request, res: Response): Promise<void> => {
   try {
