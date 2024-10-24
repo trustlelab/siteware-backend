@@ -60,7 +60,7 @@ app.use("/file/", fileRoutes);
 
 // WebSocket setup for real-time logs
 const httpServer: Server = app.listen(PORT, () => {
-  console.log(`Server running on https://beta.trustle.one:${PORT}`);
+  console.log(`Server running on https://beta.trustle.one`);
 });
 
 const wss = new WebSocketServer({ server: httpServer });
@@ -69,6 +69,11 @@ wss.on("connection", (ws: WebSocket) => {
   // Instead of handling the connection directly, pass it to the class
   const clientConnection = new MediaStream(ws);
 });
+
+
+
+
+
 const prisma = new PrismaClient(); // Initialize Prisma Client
 
 let streamSid: string = "";
@@ -126,6 +131,10 @@ class MediaStream {
           if (agent) {
             this.AgentObject.push(agent); // Push the agent object to the array
           }
+
+
+          console.log(this.getAgentObject()[0].welcomeMessage)
+          promptLLM(this,this.getAgentObject()[0].welcomeMessage)
         })
         .catch((error) =>
           console.error(`Error fetching call details: ${error.message}`)
@@ -246,7 +255,7 @@ const setupDeepgram = (mediaStream: any) => {
         is_finals = [];
         console.log(`deepgram STT: [Speech Final] ${utterance}`);
         llmStart = Date.now();
-        // promptLLM(mediaStream, utterance)
+        promptLLM(mediaStream, utterance)
       }
     });
 
