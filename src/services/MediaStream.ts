@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import { PrismaClient } from "@prisma/client";
 import { setupDeepgram, setupDeepgramWebsocket } from "./Deepgram";
 import twilio from "twilio";
+import promptLLM from './LLM'
 
 const prisma = new PrismaClient();
 const accountSid: string = process.env.TWILIO_ACCOUNT_SID || "";
@@ -10,12 +11,13 @@ const authToken: string = process.env.TWILIO_AUTH_TOKEN || "";
 
 class MediaStream {
   private connection: WebSocket;
-  private deepgram: any;
-  private deepgramTTSWebsocket: WebSocket;
-  private messages: never[] = [];
-  private repeatCount: number = 0;
+  deepgram: any;
+  deepgramTTSWebsocket: WebSocket;
+  messages: never[] = [];
+  repeatCount: number = 0;
   private AgentObject: any[] = []; // Array to store agent objects
-  private streamSid: string = "";
+
+  public streamSid: string = "";
 
   constructor(ws: WebSocket) {
     this.connection = ws;
@@ -73,7 +75,7 @@ class MediaStream {
         }
 
         console.log(this.getAgentObject()[0].welcomeMessage);
-        this.promptLLM(this.getAgentObject()[0].welcomeMessage);
+        promptLLM(this, this.getAgentObject()[0].welcomeMessage);
       })
       .catch((error) => console.error(`Error fetching call details: ${error.message}`));
   }
@@ -86,21 +88,24 @@ class MediaStream {
     return this.AgentObject;
   }
 
-  public sendData(messageJSON: string) {
-    if (this.connection.readyState === WebSocket.OPEN) {
-      try {
-        this.connection.send(messageJSON);
-      } catch (error) {
-        console.error("Error sending message:", error);
-      }
-    } else {
-      console.error("WebSocket connection is not open. Cannot send message.");
-    }
-  }
+  sendData(messageJSON: string) {
+    console.log("Attempting to send message:", messageJSON); // Log the message you are trying to send
 
-  private async promptLLM(prompt: string) {
-    // OpenAI GPT prompt logic here
-  }
+    // Check if the WebSocket connection is open
+    if (this.connection.readyState === WebSocket.OPEN) {
+        try {
+            console.log("WebSocket connection is open. Sending message..."); // Confirm connection status
+            this.connection.send(messageJSON);
+            console.log("Message sent successfully"); // Confirm successful send
+        } catch (error) {
+            console.error("Error sending message:", error); // Log specific send errors
+        }
+    } else {
+        console.error("WebSocket connection is not open. Cannot send message.");
+        console.log("WebSocket readyState:", this.connection.readyState); // Log current WebSocket state
+    }
 }
 
-export { MediaStream };
+}
+
+export default MediaStream;
