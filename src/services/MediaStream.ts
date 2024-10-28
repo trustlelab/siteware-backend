@@ -18,12 +18,14 @@ class MediaStream {
   private AgentObject: any[] = []; // Array to store agent objects
 
   public streamSid: string = "";
-
+  public speaking = false;
+  
   constructor(ws: WebSocket) {
     this.connection = ws;
     this.initConnection();
     this.deepgram = setupDeepgram(this);
     this.deepgramTTSWebsocket = setupDeepgramWebsocket(this);
+    
   }
 
   private initConnection() {
@@ -89,7 +91,6 @@ class MediaStream {
   }
 
   sendData(messageJSON: string) {
-    console.log("Attempting to send message:", messageJSON); // Log the message you are trying to send
 
     // Check if the WebSocket connection is open
     if (this.connection.readyState === WebSocket.OPEN) {

@@ -5,7 +5,6 @@ const openai = new OpenAI();
 let llmStart = 0;
 let ttsStart = 0;
 let firstByte = true;
-let speaking = false;
 let send_first_sentence_input_time: number | null = null;
 const chars_to_check = [".", ",", "!", "?", ";", ":"];
 
@@ -29,10 +28,12 @@ async function promptLLM(mediaStream: any, prompt: string) {
     ],
   });
 
-  speaking = true;
+  mediaStream.speaking = true;
+
+  console.log(mediaStream.speaking)
   let firstToken = true;
   for await (const chunk of stream) {
-    if (speaking) {
+    if (mediaStream.speaking) {
       if (firstToken) {
         const end = Date.now();
         const duration = end - llmStart;
