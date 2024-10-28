@@ -6,7 +6,6 @@ const deepgramClient = createClient(process.env.DEEPGRAM_API_KEY);
 let llmStart = 0;
 let ttsStart = 0;
 let firstByte = true;
-let speaking = false;
 let send_first_sentence_input_time: number | null = null;
 let keepAlive: any;
 
@@ -60,7 +59,7 @@ const setupDeepgram = (mediaStream: any) => {
           }
         } else {
           console.log(`deepgram STT:    [Interim Result] ${transcript}`);
-          if (speaking) {
+          if (mediaStream.speaking) {
             console.log("twilio: clear audio playback", mediaStream.streamSid);
             // Handles Barge In
             const messageJSON = JSON.stringify({
@@ -72,7 +71,7 @@ const setupDeepgram = (mediaStream: any) => {
             mediaStream.deepgramTTSWebsocket.send(
               JSON.stringify({ type: "Clear" })
             );
-            speaking = false;
+            mediaStream.speaking = false;
           }
         }
       }
@@ -122,25 +121,15 @@ const setupDeepgramWebsocket = (mediaStream: any) => {
   });
 
   ws.on("message", function incoming(data) {
-    // console.log("Message received from deepgram TTS:", data.toString()); // Log to confirm message arrival
 
-    console.log("TTS WebSocket is connected and handling the message");
-    const payload = data.toString("base64");
-    console.log(`SIDc... : ${mediaStream.streamSid}`)
-      const messageJSON = JSON.stringify({
-        event: "media",
-        streamSid: mediaStream.streamSid,  // Corrected line
-        media: { payload },
-      });
-       mediaStream.sendData(messageJSON);
+   
+ 
 
-
-    if (speaking) {
+    if (mediaStream.speaking) {
       try {
         const json = JSON.parse(data.toString());
-        console.log("Parsed deepgram TTS JSON:", json); // Log parsed JSON
       } catch (error) {
-        console.error("Error parsing JSON from deepgram TTS:", error); // Catch parsing errors if any
+               // Ignore
       }
 
       // Process First Byte logic
@@ -162,9 +151,15 @@ const setupDeepgramWebsocket = (mediaStream: any) => {
         }
       }
 
-
-    
-      // // Uncomment the following line to enable message sending through mediaStream
+      const payload = data.toString("base64");
+      console.log(`SIDc... : ${mediaStream.streamSid}`)
+        const messageJSON = JSON.stringify({
+          event: "media",
+          streamSid: mediaStream.streamSid,  // Corrected line
+          media: { payload },
+        });
+      
+        mediaStream.sendData(messageJSON);
     }
   });
 
