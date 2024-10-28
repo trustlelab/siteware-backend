@@ -42,6 +42,7 @@ model Agent {
   realTimeSTT           Boolean? // optional
   voiceCallSupported    Boolean? // optional
   voiceCallProvider     String?  // optional
+  phoneNumber           String?  // New phone number property (optional)
   welcomeMessage        String?  // Welcome message for the agent (optional)
   agentPrompt           String?  // Prompt for the agent (optional)
 
