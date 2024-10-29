@@ -7,7 +7,7 @@ import path from "path";
 import WebSocket, { WebSocketServer } from "ws";
 import { Server } from "http";
 import authRoutes from "./routes/authRoutes";
-import agentRoutes from "./routes/AgentRoutes";
+import agentRoutes from "./routes/agentRoutes";
 import twilioRoutes from "./routes/twilioRoutes";
 import voiceLabRoutes from "./routes/voiceLabRoutes";
 import fileRoutes from "./routes/fileRouter";
