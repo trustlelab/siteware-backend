@@ -27,11 +27,16 @@ export const createAgent = async (req: Request, res: Response): Promise<void> =>
     realTimeSTT,
     voiceCallSupported,
     voiceCallProvider,
+    agentType, // Extract agentType from request body
   } = req.body;
 
   // Validate required fields
   if (!name) {
     res.status(400).json({ status: 0, message: 'Name is required.' });
+    return;
+  }
+  if (!agentType || (agentType !== 'TEXT' && agentType !== 'VOICE')) {
+    res.status(400).json({ status: 0, message: 'Agent type is required and must be either "TEXT" or "VOICE".' });
     return;
   }
 
@@ -71,8 +76,9 @@ export const createAgent = async (req: Request, res: Response): Promise<void> =>
         realTimeSTT,
         voiceCallSupported,
         voiceCallProvider,
-        userId, // Include userId in the agent data
-        uniqueId, // Include uniqueId in the agent data
+        agentType, // Include agentType in the agent data
+        userId,    // Include userId in the agent data
+        uniqueId,  // Include uniqueId in the agent data
       },
     });
 
@@ -82,6 +88,7 @@ export const createAgent = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ status: 0, message: 'Error creating agent' });
   }
 };
+
 
 
 // Get list of all agents
