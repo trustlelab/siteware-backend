@@ -10,12 +10,15 @@ import authRoutes from "./routes/authRoutes";
 import agentRoutes from "./routes/agentRoutes";
 import twilioRoutes from "./routes/twilioRoutes";
 import voiceLabRoutes from "./routes/voiceLabRoutes";
+import pineconeRoutes from "./routes/pineconeRoutes";
+
 import fileRoutes from "./routes/fileRouter";
 import { loadSwaggerDocs } from "./swaggerLoader";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 
 
 import MediaStream from './services/MediaStream'
+import chatRoutes from "./routes/chatRoutes";
 
 // Initialize dotenv for environment variables
 dotenv.config();
@@ -25,6 +28,7 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 const PORT = process.env.PORT || 8000;
+const WEBHOOK_HOST = process.env.WEBHOOK_HOST || "https://localhost:8000";
 
 // CORS configuration
 const corsOptions = {
@@ -44,14 +48,18 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Define your routes
 app.use("/auth", authRoutes);
+
 app.use("/agent", agentRoutes);
 app.use("/twilio", twilioRoutes);
 app.use("/voice", voiceLabRoutes);
 app.use("/file/", fileRoutes);
 
+app.use("/chat", chatRoutes);
+app.use("/pinecone", pineconeRoutes);
+
 // WebSocket setup for real-time logs
 const httpServer: Server = app.listen(PORT, () => {
-  console.log(`Server running on https://beta.trustle.one`);
+  console.log(`Server running on ${WEBHOOK_HOST}`);
 });
 
 const wss = new WebSocketServer({ server: httpServer });
@@ -86,7 +94,7 @@ app.post("/twiml", async (req: Request, res: Response) => {
   const responseXml = `<?xml version="1.0" encoding="UTF-8" ?>
 <Response>
   <Connect>
-    <Stream url="wss://beta.trustle.one/streams">
+    <Stream url="wss://${WEBHOOK_HOST}/streams">
       <Parameter name="aCustomParameter" value="defaultParam" />
     </Stream>
   </Connect>

@@ -11,7 +11,8 @@ const chars_to_check = [".", ",", "!", "?", ";", ":"];
 async function promptLLM(mediaStream: any, prompt: string) {
   const AgentObject = mediaStream.getAgentObject();
   const { agentPrompt } = AgentObject[0];
-  // console.log(`agentPrompt : ${agentPrompt}`);
+  console.log(`agentPrompt : ${agentPrompt}`);
+
 
   const stream = openai.beta.chat.completions.stream({
     model: "gpt-3.5-turbo",
@@ -65,14 +66,14 @@ async function promptLLM(mediaStream: any, prompt: string) {
   // Tell TTS Websocket we're finished generating tokens
   mediaStream.deepgramTTSWebsocket.send(JSON.stringify({ type: "Flush" }));
 }
-  
-  function containsAnyChars(str: string): boolean {
-    // Convert the string to an array of characters
-    let strArray: string[] = Array.from(str);
-  
-    // Check if any character in strArray exists in chars_to_check
-    return strArray.some((char: string) => chars_to_check.includes(char));
-  }
-  
-  export default promptLLM;
+
+function containsAnyChars(str: string): boolean {
+  // Convert the string to an array of characters
+  let strArray: string[] = Array.from(str);
+
+  // Check if any character in strArray exists in chars_to_check
+  return strArray.some((char: string) => chars_to_check.includes(char));
+}
+
+export default promptLLM;
   
