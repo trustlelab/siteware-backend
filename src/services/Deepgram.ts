@@ -9,8 +9,6 @@ let firstByte = true;
 let send_first_sentence_input_time: number | null = null;
 let keepAlive: any;
 
-
-
 const deepgramTTSWebsocketURL =
   "wss://api.deepgram.com/v1/speak?encoding=mulaw&sample_rate=8000&container=none&model=aura-orpheus-en";
 

@@ -77,6 +77,11 @@ class MediaStream {
         }
 
         console.log(this.getAgentObject()[0].welcomeMessage);
+        // console.log(this.getAgentObject()[0].agentId);
+
+        // promptLLM(this, this.getAgentObject()[0].welcomeMessage);
+
+        // Send the welcome message, agent id and call details to the LLM
         promptLLM(this, this.getAgentObject()[0].welcomeMessage);
       })
       .catch((error) => console.error(`Error fetching call details: ${error.message}`));
