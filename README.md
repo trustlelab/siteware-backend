@@ -5,7 +5,8 @@
 **Siteware Backend** is the backend for an AI-powered voice agent platform that allows users to create unlimited custom assistants. This project integrates with **Twilio** to enable real-time voice communication, making it a versatile solution for various voice interaction use cases such as customer service bots, personal assistants, and more.
 
 Siteware architecture and idea updated in following links
-
+## Architecture
+https://www.mindmeister.com/app/map/3406120305?t=Y7TsUqg6h2
 ![Siteware Conversational Chatbot System Architecture - Page 1 (1)](https://github.com/user-attachments/assets/b4bc4a17-9020-4d64-8d6a-abcff6549c65)
 ![Siteware Functional Structure - Pavlo - Page 1](https://github.com/user-attachments/assets/9b9afa70-270d-421d-b71e-cd402f825b6c)
 
