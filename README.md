@@ -1,8 +1,21 @@
-# Siteware Backend
+![image](https://github.com/user-attachments/assets/9e3c5591-b8ac-4d04-9331-19dbdeec29b1)# Siteware Backend
 
 ## Overview
 
 **Siteware Backend** is the backend for an AI-powered voice agent platform that allows users to create unlimited custom assistants. This project integrates with **Twilio** to enable real-time voice communication, making it a versatile solution for various voice interaction use cases such as customer service bots, personal assistants, and more.
+
+Siteware architecture and idea updated in following links
+
+End client
+https://loco-soft.de/
+![Siteware Conversational Chatbot System Architecture - Page 1 (1)](https://github.com/user-attachments/assets/b4bc4a17-9020-4d64-8d6a-abcff6549c65)
+
+Sponsor:
+https://de.linkedin.com/company/sugarpool
+https://de.linkedin.com/in/andreas-jansen-6634ba49
+https://soundcloud.com/andreas-jansen-361617862
+https://www.powerhouse.band/band/andreas-jansen/
+https://www.xing.com/profile/ANDREAS_JANSEN7
 
 ## Key Features
 
