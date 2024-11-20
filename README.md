@@ -133,8 +133,12 @@ https://loco-soft.de/
 
 Sponsor:
 https://de.linkedin.com/company/sugarpool
+
 https://de.linkedin.com/in/andreas-jansen-6634ba49
+
 https://soundcloud.com/andreas-jansen-361617862
+
 https://www.powerhouse.band/band/andreas-jansen/
+
 https://www.xing.com/profile/ANDREAS_JANSEN7
 
