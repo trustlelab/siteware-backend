@@ -132,6 +132,7 @@ End client
 https://loco-soft.de/
 
 Sponsor:
+
 https://de.linkedin.com/company/sugarpool
 
 https://de.linkedin.com/in/andreas-jansen-6634ba49
