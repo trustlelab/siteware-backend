@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/9e3c5591-b8ac-4d04-9331-19dbdeec29b1)# Siteware Backend
+# Siteware Backend
 
 ## Overview
 
@@ -6,16 +6,8 @@
 
 Siteware architecture and idea updated in following links
 
-End client
-https://loco-soft.de/
 ![Siteware Conversational Chatbot System Architecture - Page 1 (1)](https://github.com/user-attachments/assets/b4bc4a17-9020-4d64-8d6a-abcff6549c65)
-
-Sponsor:
-https://de.linkedin.com/company/sugarpool
-https://de.linkedin.com/in/andreas-jansen-6634ba49
-https://soundcloud.com/andreas-jansen-361617862
-https://www.powerhouse.band/band/andreas-jansen/
-https://www.xing.com/profile/ANDREAS_JANSEN7
+![Siteware Functional Structure - Pavlo - Page 1](https://github.com/user-attachments/assets/9b9afa70-270d-421d-b71e-cd402f825b6c)
 
 ## Key Features
 
@@ -135,3 +127,14 @@ npx prisma migrate deploy
 
 *   **NLP Integration**: Future plans include adding Natural Language Processing (NLP) capabilities for better voice understanding.
 *   **Real-time Analytics**: Monitor voice interactions and assistant performance with detailed analytics dashboards (upcoming).
+*   
+End client
+https://loco-soft.de/
+
+Sponsor:
+https://de.linkedin.com/company/sugarpool
+https://de.linkedin.com/in/andreas-jansen-6634ba49
+https://soundcloud.com/andreas-jansen-361617862
+https://www.powerhouse.band/band/andreas-jansen/
+https://www.xing.com/profile/ANDREAS_JANSEN7
+
